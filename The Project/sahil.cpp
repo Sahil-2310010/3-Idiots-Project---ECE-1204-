@@ -6,7 +6,7 @@ using json = nlohmann::json;
 class Person {
 protected:
     string name;
-    string pin;
+    string password;
 };
 
 class Student : public Person {
@@ -17,7 +17,7 @@ private:
 
 public:
     string getName() { return name; }
-    string getPin() { return pin; }
+    string getpassword() { return password; }
     string getDept() { return department; }
     int getSeries() { return series; }
     int getId() { return id; }
@@ -25,8 +25,8 @@ public:
     void setDetails();
 
     // Making JSON functions friends so that they can access pivate & protected members
-    friend Student from_json(const json &j);
-    friend json to_json(const Student &s);
+    friend Student student_from_json(const json &j);
+    friend json student_to_json(const Student &s);
 };
 
 void Student :: setDetails() 
@@ -43,41 +43,41 @@ void Student :: setDetails()
     cout << "Enter your roll (ID): ";
     cin >> id;
 
-    string pin1, pin2;
+    string password1, password2;
     while (true) {
         cout << "Enter password: ";
-        cin >> pin1;
+        cin >> password1;
         cout << "Confirm password: ";
-        cin >> pin2;
-        if (pin1 == pin2) break;
+        cin >> password2;
+        if (password1 == password2) break;
         cout << "Passwords do not match! Try again.\n";
     }
-    pin = pin1;
+    password = password1;
 }
 
 // Student to JSON
-json to_json(const Student &s) {
+json student_to_json(const Student &s) {
     return {
         {"id", s.id},
         {"name", s.name},
-        {"pin", s.pin},
+        {"password", s.password},
         {"department", s.department},
         {"series", s.series}
     };
 }
 
 // JSON to Student
-Student from_json(const json &j) {
+Student student_from_json(const json &j) {
     Student s;
     s.id = j.value("id", 0);
     s.name = j.value("name", "");
-    s.pin = j.value("pin", "");
+    s.password = j.value("password", "");
     s.department = j.value("department", "");
     s.series = j.value("series", 0);
     return s;
 }
 
-// Load students
+// Load Students from students.json
 vector<Student> loadStudents() {
     vector<Student> students;
     ifstream in("students.json");
@@ -87,7 +87,7 @@ vector<Student> loadStudents() {
             in >> j;
             if (j.is_array()) {
                 for (auto &item : j) {
-                    students.push_back(from_json(item));
+                    students.push_back(student_from_json(item));
                 }
             }
         } catch (...) {
@@ -97,11 +97,11 @@ vector<Student> loadStudents() {
     return students;
 }
 
-// Save students
-void saveStudents(const vector<Student>& students) {
+// Save Students to students.json
+void saveStudents(const vector<Student> &students) {
     json j = json::array();
     for (auto &s : students) {
-        j.push_back(to_json(s));
+        j.push_back(student_to_json(s));
     }
     ofstream out("students.json");
     out << setw(4) << j << endl;
@@ -110,9 +110,97 @@ void saveStudents(const vector<Student>& students) {
 
 
 class Admin : public Person {
-public:
+private:
+    string admin_id;
 
+public:
+    string getAdmin_id() { return admin_id; }
+    string getHall_name() { return name; }
+    string getPassword() { return password; }
+
+    void setAdminDetails();
+
+    friend Admin admin_from_json(const json &j);
+    friend json admin_to_json(const Admin &ad);
 };
+
+void Admin :: setAdminDetails()
+{
+    cout << "Enter hall name: ";
+    cin >> name;
+
+    cout << "Enter ID: ";
+    cin.ignore();
+    getline(cin, admin_id);
+
+    string password1, password2;
+    while (true) {
+        cout << "Enter password: ";
+        cin >> password1;
+        cout << "Confirm password: ";
+        cin >> password2;
+        if (password1 == password2) break;
+        cout << "Passwords do not match! Try again.\n";
+    }
+    password = password1;
+}
+
+// Admin to JSON
+json admin_to_json(const Admin &ad)
+{
+    return {
+        {"hall_name", ad.name},
+        {"admin_id", ad.admin_id},
+        {"password", ad.password}
+    };
+}
+
+// JSON to Admin
+Admin admin_from_json(const json &j)
+{
+    Admin ad;
+
+    ad.admin_id = j.value("admin_id", "");
+    ad.name = j.value("hall_name", "");
+    ad.password = j.value("password", "");
+
+    return ad;
+}
+
+// Load Admins from admins.json
+vector<Admin> loadAdmin() 
+{
+    vector<Admin> admins;
+
+    ifstream in("admins.json");
+
+    if(in)
+    {
+        try {
+            json j;
+            in >> j;
+            if (j.is_array()) {
+                for (auto &item : j) {
+                    admins.push_back(admin_from_json(item));
+                }
+            }
+        } catch (...) {
+            cerr << "Error reading admins.json, starting fresh.\n";
+        }
+    }
+    return admins;
+}
+
+// Save Admins to admins.json
+void saveAdmins(const vector<Admin> &admins) 
+{
+    json j = json::array();
+    for (auto &ad : admins) {
+        j.push_back(admin_to_json(ad));
+    }
+    ofstream out("admins.json");
+    out << setw(4) << j << endl;
+}
 
 int main() {
     while (true) {
@@ -129,14 +217,14 @@ int main() {
                 int id;
                 cout << "Enter ID: ";
                 cin >> id;
-                string pin;
+                string password;
                 cout << "Enter Password: ";
-                cin >> pin;
+                cin >> password;
 
                 auto students = loadStudents();  // Load all students from student.json file
                 bool found = false;
                 for (auto &s : students) {
-                    if (s.getId() == id && s.getPin() == pin) {
+                    if (s.getId() == id && s.getpassword() == password) {
                         cout << "Login successful! Welcome " << s.getName() << endl;
                         found = true;
                         break;
