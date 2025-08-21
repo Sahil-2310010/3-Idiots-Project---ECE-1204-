@@ -379,9 +379,10 @@ int main()
                     }
                     else if (choice == 3) // Zawad complete this part(Check)
                     {
-                        student p1;
-                        CheckBalance(p1.getBalance());
-                        cout << "Balance system not yet implemented.\n";
+                        // student p1;
+                        // CheckBalance(p1.getBalance());
+                        // cout << "Balance system not yet implemented.\n";
+                        cout << st->getName() << " your balance: " << st->getBalance() << endl;
                     }
                     else if (choice == 4) // Zawad complete this part
                     {
