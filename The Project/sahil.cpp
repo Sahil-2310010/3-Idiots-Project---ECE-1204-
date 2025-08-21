@@ -14,6 +14,7 @@ private:
     string department;
     int series;
     int id;
+    float balance = 0.00;
 
 public:
     string getName() { return name; }
@@ -21,15 +22,17 @@ public:
     string getDept() { return department; }
     int getSeries() { return series; }
     int getId() { return id; }
+    float getBalance() { return balance; }
 
-    void setDetails(); // Set all necessary details for student
+    void setBalance(float bal) { balance = bal; }
+    void setDetails(); // Set all necessary details for Student
 
     // Making JSON functions friends so that they can access pivate & protected members
     friend Student student_from_json(const json &j);
     friend json student_to_json(const Student &s);
 };
 
-// Set all necessary details for student
+// Set all necessary details for Student
 void Student :: setDetails() 
 {
     cout << "Enter series: ";
@@ -126,7 +129,7 @@ public:
     friend json admin_to_json(const Admin &ad);
 };
 
-// Set all necessary details for admin
+// Set all necessary details for Admin
 void Admin :: setAdminDetails()
 {
     cout << "Enter hall name: ";
@@ -205,7 +208,97 @@ void saveAdmins(const vector<Admin> &admins)
     out << setw(4) << j << endl;
 }
 
-int main() {
+
+
+// ---------- Meal Token Handling ----------
+
+// Get today's date in Year-Month-Day format
+string getTodayDate() 
+{
+    time_t t = time(0);
+    tm *now = localtime(&t);
+    char buffer[11];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d", now);
+    return string(buffer);
+}
+
+// Load purchases from purchases.json
+json loadPurchases(const string &purchase_file) {
+    ifstream in(purchase_file);
+    json data;
+    if (in.is_open()) 
+    {
+        try {
+            in >> data;
+        } catch (...) {
+            cerr << "Error reading purchases.json, starting fresh.\n";
+        }
+        in.close();
+    }
+    if (!data.is_array()) data = json::array();
+    return data;
+}
+
+// Save purchases to purchases.json
+void savePurchases(const string &purchase_file, const json &data) {
+    ofstream out(purchase_file);
+    out << setw(4) << data << endl;
+    out.close();
+}
+
+// Add purchase (rules: maximum 200, no duplicate in same date with same tokenType)
+bool addPurchase(const string &purchase_file, int studentId, const string &tokenType) {
+    json data = loadPurchases(purchase_file);
+    string today = getTodayDate();
+
+    // Check if student already bought the Token
+    for (auto &entry : data) {
+        if (entry["studentId"] == studentId && entry["date"] == today && entry["tokenType"] == tokenType) {
+            cout << "You already purchased a token today!" << endl;
+            return false;
+        }
+    }
+
+    // If more than 200 then reset file
+    if (data.size() >= 200) {
+        cout << "Resetting purchase history (limit reached)." << endl;
+        data = json::array();
+    }
+
+    // Add new record
+    json newEntry = {
+        {"studentId", studentId},
+        {"date", today},
+        {"tokenType", tokenType}
+    };
+    data.push_back(newEntry);
+
+    savePurchases(purchase_file, data);
+
+    cout << "Token purchased successfully on " << today << endl;
+    return true;
+}
+
+// Show all purchases for a student
+void viewPurchases(const string &purchase_file, int studentId) {
+    json data = loadPurchases(purchase_file);
+    cout << "--- Your Purchases ---\n";
+    bool found = false;
+    for (auto &entry : data) {
+        if (entry["studentId"] == studentId) {
+            cout << "Date: " << entry["date"]
+                 << " | Token: " << entry["tokenType"] << endl;
+            found = true;
+        }
+    }
+    if (!found) cout << "No purchases found.\n";
+}
+
+
+
+
+int main() 
+{
     while (true) {
         cout << "---Choose any of these---\n1. I am student\n2. I am admin\n3. Exit program\n";
         int x;
@@ -228,16 +321,50 @@ int main() {
 
                 auto students = loadStudents();  // Load all Students from students.json file
                 bool found = false;
-                for (auto &s : students) {
+                Student *st = nullptr;
+                for (auto &s : students)
+                {
                     if (s.getId() == id && s.getpassword() == password) {
-                        cout << "Login successful! Welcome " << s.getName() << endl;
+                        cout << "\nLogin successful!\n\n===Welcome to Hall Automation " << s.getName() << "===" << endl;
                         found = true;
+                        st = &s;
                         break;
                     }
                 }
                 if (!found) cout << "Invalid ID or password.\n";
+                else if (found)
+                {
+                    cout << "1. Buy Meal Token\n2. View Purchase status\n3. Check Balance\n4. Add Balance to Wallet\n";
+                    int choice;
+                    cin >> choice;
 
+                    if (choice == 1) // Buy Token
+                    { // Sazid add other necessary information here
+                        cout << "1. Lunch Token\n2. Dinner Token\n";
+                        int tokenType;
+                        cin >> tokenType;
+                        if(st->getBalance() >= 40)
+                        {
+                            addPurchase("purchases.json", id, ((tokenType == 1) ? "Lunch" : "Dinner"));
+                        }
+                        else
+                            cout << "Insufficient Balance! Recharge first.\n";
+                    }
+                    else if (choice == 2) // Purchase history
+                    {
+                        viewPurchases("purchases.json", id);
+                    }
+                    else if (choice == 3) // Zawad complete this part
+                    {
+                        cout << "Balance system not yet implemented.\n";
+                    }
+                    else if (choice == 4) // Zawad complete this part
+                    {
+                        cout << "Balance system not yet implemented.\n";
+                    }
+                }
             }
+
             else if (log_sign == 2) // Student signup
             {   
                 Student s;
@@ -274,7 +401,9 @@ int main() {
                     }
                 }
                 if (!found) cout << "Invalid ID or password.\n";
+                
             }
+
             else if(log_sign == 2) // Admin signup
             { 
                 Admin ad;
@@ -284,7 +413,9 @@ int main() {
                 saveAdmins(admins);
             }
         }
-        else if (x == 3) {
+        
+        else if (x == 3) // Exit Program
+        {
             cout << "Program stopped!\n";
             break;
         }
