@@ -20,9 +20,47 @@ T addBalance(T amount) {
     }
 }
 
+
+//Generic Function for Balance Checking
+
+template<class S>
+void CheckBalance(S &balance)
+{
+    try{
+        //For Negative balance
+     if(balance<0)
+     {
+         throw "Invalid Balance";   //Exception
+     }
+     else
+     {
+         cout<<"Your Cuurent Balance: "<<balance<<endl;  //Valid Balance
+     }
+    }
+
+    catch(const char*p)
+    {
+        cout<<p<<endl;  //error message  
+    }
+        
+}
+
 int main() {
-   /* cout << "Balance after adding 500: " << addBalance(500) << endl;
+    
+   /* AddBalance Test
+   
+   cout << "Balance after adding 500: " << addBalance(500) << endl;
     cout << "Balance after adding -100: " << addBalance(-100) << endl;
-    */
+   */
+
+    
+/* CheckBalance Test
+
+    int b1 = 1000;
+    int b2 = -500;
+
+    CheckBalance(b1);  // valid
+    CheckBalance(b2);  // invalid, triggers exception
+*/    
     return 0;
 }
