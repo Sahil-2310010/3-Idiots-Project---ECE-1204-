@@ -45,6 +45,59 @@ void CheckBalance(S &balance)
         
 }
 
+// Admin
+
+class Admin {
+    string password = "Admin";
+    string name = "Admin";
+    string mealDay;
+
+public:
+    Admin(string pass, string nm) {
+        if (password == pass && name == nm) {
+            cout << "Welcome Admin" << endl;
+            cout << "Choose Meal Day: ";
+            cin >> mealDay;
+        } else {
+            cout << "Incorrect Details!" << endl;
+        }
+    }
+
+
+    //Feast
+    bool getFeast() {
+        string day = mealDay;
+        // Convert each character to lowercase
+        for (size_t i = 0; i < day.length(); i++) {
+            day[i] = tolower(day[i]);
+        }
+
+        if (day == "friday") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    //Regular
+    bool getRegular() {
+        string day = mealDay;
+        // Convert each character to lowercase
+        for (size_t i = 0; i < day.length(); i++) {
+            day[i] = tolower(day[i]);
+        }
+
+        if (day != "friday") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+};
+
+
+
 int main() {
     
    /* AddBalance Test
@@ -61,6 +114,29 @@ int main() {
 
     CheckBalance(b1);  // valid
     CheckBalance(b2);  // invalid, triggers exception
-*/    
+*/   
+
+    
+/* Admin Test
+Admin ob("Admin", "Admin");
+    if(ob.getFeast())
+    {
+        cout<<"Feast Available"<<endl;
+    }
+    else
+    {
+        cout<<"No Feast For The Selected Day"<<endl;
+    }
+
+    if(ob.getRegular())
+    {
+        cout<<"Regular Available"<<endl;
+    }
+    else
+    {
+        cout<<"No Regular Token For The Day, Try Fest"<<endl;
+    }
+
+    */
     return 0;
 }
