@@ -22,13 +22,14 @@ public:
     int getSeries() { return series; }
     int getId() { return id; }
 
-    void setDetails();
+    void setDetails(); // Set all necessary details for student
 
     // Making JSON functions friends so that they can access pivate & protected members
     friend Student student_from_json(const json &j);
     friend json student_to_json(const Student &s);
 };
 
+// Set all necessary details for student
 void Student :: setDetails() 
 {
     cout << "Enter series: ";
@@ -118,12 +119,14 @@ public:
     string getHall_name() { return name; }
     string getPassword() { return password; }
 
-    void setAdminDetails();
+    void setAdminDetails(); // Set all necessary details for admin
 
+    // Making JSON functions friends so that they can access pivate & protected members
     friend Admin admin_from_json(const json &j);
     friend json admin_to_json(const Admin &ad);
 };
 
+// Set all necessary details for admin
 void Admin :: setAdminDetails()
 {
     cout << "Enter hall name: ";
@@ -168,7 +171,7 @@ Admin admin_from_json(const json &j)
 }
 
 // Load Admins from admins.json
-vector<Admin> loadAdmin() 
+vector<Admin> loadAdmins() 
 {
     vector<Admin> admins;
 
@@ -208,12 +211,14 @@ int main() {
         int x;
         cin >> x;
 
-        if (x == 1) {
+        if (x == 1) // Student Part
+        {
             cout << "1. Log In\n2. Sign Up\n";
-            int l;
-            cin >> l;
+            int log_sign;
+            cin >> log_sign;
 
-            if (l == 1) {   // Login
+            if (log_sign == 1) // Student login
+            {   
                 int id;
                 cout << "Enter ID: ";
                 cin >> id;
@@ -221,7 +226,7 @@ int main() {
                 cout << "Enter Password: ";
                 cin >> password;
 
-                auto students = loadStudents();  // Load all students from student.json file
+                auto students = loadStudents();  // Load all Students from students.json file
                 bool found = false;
                 for (auto &s : students) {
                     if (s.getId() == id && s.getpassword() == password) {
@@ -232,7 +237,9 @@ int main() {
                 }
                 if (!found) cout << "Invalid ID or password.\n";
 
-            } else if (l == 2) {   // Signup
+            }
+            else if (log_sign == 2) // Student signup
+            {   
                 Student s;
                 s.setDetails();
                 auto students = loadStudents();
@@ -241,8 +248,41 @@ int main() {
                 cout << "Sign Up successful! You can now log in.\n";
             }
         }
-        else if (x == 2) {
-            cout << "Admin features coming soon...\n";
+        
+        else if (x == 2) // Admin Part
+        { 
+            cout << "1. Log In\n2. Sign Up\n";
+            int log_sign;
+            cin >> log_sign;
+            
+            if (log_sign == 1) // Admin login
+            {
+                string admin_id;
+                cout << "Enter Admin-ID: ";
+                cin >> admin_id;
+                string password;
+                cout << "Enter Password: ";
+                cin >> password;
+
+                auto admins = loadAdmins();  // Load all Admins from admins.json file
+                bool found = false;
+                for (auto &ad : admins) {
+                    if (ad.getAdmin_id() == admin_id && ad.getPassword() == password) {
+                        cout << "Login successful! Welcome " << ad.getAdmin_id() << endl;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) cout << "Invalid ID or password.\n";
+            }
+            else if(log_sign == 2) // Admin signup
+            { 
+                Admin ad;
+                ad.setAdminDetails();
+                auto admins = loadAdmins();
+                admins.push_back(ad);
+                saveAdmins(admins);
+            }
         }
         else if (x == 3) {
             cout << "Program stopped!\n";
