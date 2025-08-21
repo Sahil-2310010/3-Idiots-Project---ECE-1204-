@@ -295,6 +295,29 @@ void viewPurchases(const string &purchase_file, int studentId) {
 }
 
 
+// Check Balance
+template<class S>
+void CheckBalance(S &balance)
+{
+    try{
+        //For Negative balance
+     if(balance<0)
+     {
+         throw "Invalid Balance";   //Exception
+     }
+     else
+     {
+         cout<<"Your Cuurent Balance: "<<balance<<endl;  //Valid Balance
+     }
+    }
+
+    catch(const char*p)
+    {
+        cout<<p<<endl;  //error message  
+    }
+        
+}
+
 
 
 int main() 
@@ -354,8 +377,10 @@ int main()
                     {
                         viewPurchases("purchases.json", id);
                     }
-                    else if (choice == 3) // Zawad complete this part
+                    else if (choice == 3) // Zawad complete this part(Check)
                     {
+                        student p1;
+                        CheckBalance(p1.getBalance());
                         cout << "Balance system not yet implemented.\n";
                     }
                     else if (choice == 4) // Zawad complete this part
