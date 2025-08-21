@@ -295,28 +295,23 @@ void viewPurchases(const string &purchase_file, int studentId) {
 }
 
 
-// Check Balance
+// Check Balance with Generic Function
 template<class S>
-void CheckBalance(S &balance)
+void CheckBalance(const S &balance)
 {
-    try{
-        //For Negative balance
-     if(balance<0)
-     {
+    try {
+     if(balance < 0) //For Negative balance
          throw "Invalid Balance";   //Exception
-     }
+
      else
-     {
-         cout<<"Your Cuurent Balance: "<<balance<<endl;  //Valid Balance
-     }
+        cout << "Your Cuurent Balance: " << balance << endl;  //Valid Balance
     }
 
-    catch(const char*p)
-    {
-        cout<<p<<endl;  //error message  
-    }
+    catch(const char *p)
+        cout << p << endl;  //error message
         
 }
+
 
 
 
@@ -374,16 +369,11 @@ int main()
                             cout << "Insufficient Balance! Recharge first.\n";
                     }
                     else if (choice == 2) // Purchase history
-                    {
                         viewPurchases("purchases.json", id);
-                    }
-                    else if (choice == 3) // Zawad complete this part(Check)
-                    {
-                        // student p1;
-                        // CheckBalance(p1.getBalance());
-                        // cout << "Balance system not yet implemented.\n";
-                        cout << st->getName() << " your balance: " << st->getBalance() << endl;
-                    }
+
+                    else if (choice == 3) // Balance Checking part
+                        CheckBalance(st->getBalance());
+                    
                     else if (choice == 4) // Zawad complete this part
                     {
                         cout << "Balance system not yet implemented.\n";
