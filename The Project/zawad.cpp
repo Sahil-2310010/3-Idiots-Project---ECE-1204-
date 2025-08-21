@@ -1,44 +1,28 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 int balance = 1000;
-
-template<class T>
-class AddBalance{
- T amount;
-
- public:
-     AddBalance(T amnt)
-     {
-         try{
-         if(amnt<0)
-         {
-             throw "Invalid Amount";
-         }
-         else
-         {
-             amount =amnt;
-         }
-         }
-         catch(const char*e)
-         {
-             cout<<e<<endl;
-             amount = 0;
-         }
-
-     }
-
-     T getBalance()
-     {
-         return amount+balance;
-     }
-};
+// Generic function
+template <class T>
+T addBalance(T amount) {
+    try {
+        if (amount < 0) {
+            throw "Invalid Amount";
+        }
+        else
+        {
+            return balance + amount;
+        }
+        
+    } 
+    catch (const char* e) {
+        cout << e << endl;
+        return balance; // return current balance if invalid
+    }
+}
 
 int main() {
-    /*AddBalance<int> a1(500);
-    cout << "Balance: " << a1.getBalance() << endl;
-
-    AddBalance<int> a2(-100); // Will trigger exception
-    cout << "Balance: " << a2.getBalance() << endl;
+   /* cout << "Balance after adding 500: " << addBalance(500) << endl;
+    cout << "Balance after adding -100: " << addBalance(-100) << endl;
     */
     return 0;
 }
