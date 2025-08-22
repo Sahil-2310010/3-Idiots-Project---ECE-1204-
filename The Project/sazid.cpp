@@ -1,75 +1,55 @@
 #include <iostream>
 using namespace std;
+
 int balance;
 int feast_price;
 string hall;
 string time;
+
 // Generic function
 template <class T>
 T addBalance(T amount) {
     try {
         if (amount < 0) {
             throw "Invalid Amount";
-        }
-        else
-        {
+        } else {
             return balance + amount;
         }
-        
-    } 
+    }
     catch (const char* e) {
         cout << e << endl;
         return balance; // return current balance if invalid
     }
 }
 
-
-//Generic Function for Balance Checking
-
+// Generic Function for Balance Checking
 template<class S>
-void CheckBalance(S &balance)
-{
-    try{
-        //For Negative balance
-     if(balance<0)
-     {
-         throw "Invalid Balance";   //Exception
-     }
-     else
-     {
-         cout<<"Your Curent Balance: "<<balance<<endl;  //Valid Balance
-     }
+void CheckBalance(S &balance) {
+    try {
+        if (balance < 0) {
+            throw "Invalid Balance";   // Exception
+        } else {
+            cout << "Your Current Balance: " << balance << endl;  // Valid Balance
+        }
     }
-
-    catch(const char*p)
-    {
-        cout<<p<<endl;  //error message  
+    catch (const char* p) {
+        cout << p << endl;  // error message
     }
-        
 }
 
 // Admin
-
-class Admin {                            // Admin class to manage feast settings
-                                        //Admin doesnt have the authority to cancel a student's token or id
+class Admin {
     string password = "101820";
     string name = "SZS23";
-    
-    int price;
 
 public:
-
-    void signin(string pass, string nm) {
-        while(true){
+    bool signin(string pass, string nm) {
         if (password == pass && name == nm) {
             cout << "Welcome Admin" << endl;
-            break;
-            
+            return true;
         } else {
             cout << "Incorrect Details!" << endl;
-            ;
-        }
-    
+            return false;
         }
     }
 
@@ -78,66 +58,50 @@ public:
         int a;
         cin >> a;
         switch (a) {
-            case 1:
-                hall = "Zia";
-                break;
-            case 2:
-                hall = "Bongobondhu";
-                break;
-            case 3:
-                hall = "Tinshed";
-                break;
-            case 4:
-                hall = "Hamid";
-                break;
-            case 5:
-                hall = "Selim";
-                break;
-            case 6:
-                hall = "Shohidul";
-                break;
-            
+            case 1: hall = "Zia"; break;
+            case 2: hall = "Bongobondhu"; break;
+            case 3: hall = "Tinshed"; break;
+            case 4: hall = "Hamid"; break;
+            case 5: hall = "Selim"; break;
+            case 6: hall = "Shohidul"; break;
         }
 
         cout << "Time?\n 1.Lunch \n 2.Dinner" << endl;
         int t;
         cin >> t;
-        if (t == 1) {   
+        if (t == 1) {
             time = "Lunch";
             cout << "Feast set for Lunch" << endl;
         } else if (t == 2) {
             time = "Dinner";
             cout << "Feast set for Dinner" << endl;
-        } 
-        
-       
+        }
+
         cout << "What is the price of the feast?" << endl;
         cin >> feast_price;
         cout << "Feast set for " << hall << endl;
     }
-    
-
-    
 };
 
-
-class Hall: public Admin{
-    int regular_token=40;
-    int feast_token= feast_price; // Price of feast token, set by admin;
+class Hall : public Admin {
+    int regular_token = 40;
+    int feast_token = feast_price; // Price of feast token, set by admin
 
 public:
     int getRegularToken() {
         return regular_token;
     }
 
-    int getFeastToken() {  // Function to get the feast token price
+    int getFeastToken() {
         return feast_price;
     }
+
     void buyRegularToken();
     void buyFeastToken();
     void halllist();
     virtual void buy() = 0;
 };
+
 void Hall::halllist() {
     cout << "Available Halls:" << endl;
     cout << "1. Zia Hall" << endl;
@@ -149,21 +113,20 @@ void Hall::halllist() {
 }
 
 void Hall::buyRegularToken() {
+    cout << "Want to buy \n1.Lunch token\n2.Dinner token\n3.Both" << endl;
+    int abc;
+    cin >> abc;
 
-        cout << "Want to buy \n1.Lunch token\n2.Dinner token\n3.Both" << endl;
-        
-        int abc;
-        cin >> abc;
-        if (abc == 1) {
-            if(balance >= getRegularToken()) {
-                balance -= getRegularToken();
-                cout << "Regular token for lunch bought successfully!" << endl;
-            } else {
-                cout << "Insufficient balance for regular token." << endl;
-            }
+    if (abc == 1) {
+        if (balance >= getRegularToken()) {
+            balance -= getRegularToken();
+            cout << "Regular token for lunch bought successfully!" << endl;
+        } else {
+            cout << "Insufficient balance for regular token." << endl;
+        }
     }
     else if (abc == 2) {
-        if(balance >= getRegularToken()) {
+        if (balance >= getRegularToken()) {
             balance -= getRegularToken();
             cout << "Regular token for dinner bought successfully!" << endl;
         } else {
@@ -171,42 +134,34 @@ void Hall::buyRegularToken() {
         }
     }
     else if (abc == 3) {
-        if(balance >= 2 * getRegularToken()) {
+        if (balance >= 2 * getRegularToken()) {
             balance -= 2 * getRegularToken();
             cout << "Regular tokens for both lunch and dinner bought successfully!" << endl;
         } else {
             cout << "Insufficient balance for regular tokens." << endl;
         }
     }
-    else{
+    else {
         cout << "Invalid choice!" << endl;
     }
-    
-    
-
-};
+}
 
 void Hall::buyFeastToken() {
-
-try {
-    if (getFeastToken() > balance) {
-        throw "Insufficient balance!";
+    try {
+        if (getFeastToken() > balance) {
+            throw "Insufficient balance!";
+        } else {
+            cout << "Feast token bought successfully!" << endl;
+        }
+        balance -= getFeastToken();
+        cout << "Remaining balance: " << balance << " tk" << endl;
     }
-    else {
-        cout << "Feast token bought successfully!" << endl;
+    catch (const char* s) {
+        cout << s << endl;
     }
-    
-    balance -= getFeastToken();
-    cout << "Remaining balance: " << balance << " tk" << endl;
-
 }
-catch (const char* s) {
-    cout << s << endl;
-    
-}
-};
 
-class SpecificHall: public Hall {
+class SpecificHall : public Hall {
 public:
     void buy() override {
         halllist();
@@ -214,48 +169,36 @@ public:
         cout << "Choose a hall to buy token:" << endl;
         int hall_choice;
         cin >> hall_choice;
+
         switch (hall_choice) {
-            case 1:
-                hall = "Zia";
-                break;
-            case 2:
-                hall = "Bongobondhu";
-                break;
-            case 3:
-                hall = "Tinshed";
-                break;
-            case 4:
-                hall = "Hamid";
-                break;
-            case 5:
-                hall = "Selim";
-                break;
-            case 6:
-                hall = "Shohidul";
-                break;
+            case 1: hall = "Zia"; break;
+            case 2: hall = "Bongobondhu"; break;
+            case 3: hall = "Tinshed"; break;
+            case 4: hall = "Hamid"; break;
+            case 5: hall = "Selim"; break;
+            case 6: hall = "Shohidul"; break;
             default:
                 cout << "Invalid Hall" << endl;
-                return; // Exit if invalid hall
+                return;
         }
 
         cout << "1. Buy Regular Token" << endl;
-        cout << "2. Buy Feast Token (chose hall with feast to buy feast token)" << endl;
-
+        cout << "2. Buy Feast Token (choose hall with feast to buy feast token)" << endl;
         int choice;
         cin >> choice;
+
         if (choice == 1) {
-            buyRegularToken(); // Buy regular token
+            buyRegularToken();
         } else if (choice == 2) {
-            buyFeastToken(); // Buy feast token
+            buyFeastToken();
         } else {
             cout << "Invalid choice!" << endl;
         }
     }
 };
 
-
 int main() {
-    while (true) {  
+    while (true) {
         cout << "\n===== Main Menu =====" << endl;
         cout << "1. Login as Admin" << endl;
         cout << "2. Login as Student" << endl;
@@ -270,29 +213,41 @@ int main() {
             string pass;
             cin >> pass;
             cout << "Enter Admin Name: ";
-            string name;
-            cin >> name;
-            admin.signin(pass, name);
+            string nm;
+            cin >> nm;
 
-            // Admin loop
+            if (!admin.signin(pass, nm)) {
+                continue; // only go to Admin Menu if signin success
+            }
+
             while (true) {
                 cout << "\n-- Admin Menu --" << endl;
                 cout << "1. Set Feast" << endl;
                 cout << "2. Back to Main Menu" << endl;
                 int admin_choice;
                 cin >> admin_choice;
+
                 if (admin_choice == 1) {
                     admin.setFeast();
-                    cout << "Feast set for hall " << hall<< " at " <<time << endl;
-                } else if (admin_choice == 2) {
-                    break; 
-                } else {
+                    cout << "Feast set for hall " << hall << " at " << time << endl;
+                }
+                else if (admin_choice == 2) {
+                    break;
+                }
+                else {
                     cout << "Invalid choice!" << endl;
                 }
             }
         }
         else if (choice == 2) {
-           
+
+                 cout << "Enter your short name: ";
+            string student_name;
+            cin>> student_name;                         // add getline or whatever
+            cout << "Enter your ID: ";
+            string student_id;
+            cin>> student_id;
+
             while (true) {
                 cout << "\n-- Student Menu --" << endl;
                 cout << "1. Buy Token" << endl;
@@ -306,11 +261,11 @@ int main() {
                     Hall *p;
                     SpecificHall h;
                     p = &h;
-                    p->buy(); 
-                } 
+                    p->buy();
+                }
                 else if (student_choice == 2) {
                     CheckBalance(balance);
-                } 
+                }
                 else if (student_choice == 3) {
                     int add;
                     cout << "Enter amount to add: ";
@@ -319,7 +274,7 @@ int main() {
                     CheckBalance(balance);
                 }
                 else if (student_choice == 4) {
-                    break; 
+                    break;
                 }
                 else {
                     cout << "Invalid choice!" << endl;
@@ -328,7 +283,7 @@ int main() {
         }
         else if (choice == 3) {
             cout << "Exiting program. Goodbye!" << endl;
-            break; 
+            break;
         }
         else {
             cout << "Invalid choice!" << endl;
