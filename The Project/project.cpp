@@ -30,7 +30,7 @@ protected:
     string name;
     string password;
     string hall;
-    int feast_price = 60;  // Default feast price
+    int feast_price = 100;  // Default feast price
     int regular_price = 40;
 
     void setFeastPrice(int price) { feast_price = price; }
@@ -338,7 +338,7 @@ void Admin::setFeast() {
 }
 
 // Hall class inherited from Student & Admin
-class Hall : public Student, public Admin {  // Diamond problem solved here
+class Hall : public Student, public Admin {  // Diamond problem solved here & Hall is an abstract class
 private:
     int regular_token;
     int feast_token;
@@ -669,6 +669,8 @@ int main()
 
                         if (choice == 1) // Buy Token
                         {
+                            MealTokenSystem mts;
+                            mts.buy();
                             cout << "+----------------------------------+" << endl;
                             cout << "|           Select Hall             |" << endl;
                             cout << "+----------------------------------+" << endl;
