@@ -495,22 +495,6 @@ bool addPurchase(const string &purchase_file, int studentId, const string &time,
             return false;
         }
     }
-
-    // If more than 100 entries, keep only the last 30
-    if (data.size() >= 100) {
-        cout << "====================================" << endl;
-        cout << "       PURCHASE HISTORY LIMIT       " << endl;
-        cout << "====================================" << endl;
-        cout << "Purchase history limit reached." << endl;
-        cout << "Keeping last 30 entries and removing older ones." << endl;
-        cout << "====================================" << endl;
-
-        json newData = json::array();
-        for (size_t i = (data.size() > 30 ? data.size() - 30 : 0); i < data.size(); ++i) {
-            newData.push_back(data[i]);
-        }
-        data = newData;
-    }
     
     // Add new record
     json newEntry = {
